@@ -2,6 +2,22 @@ const url = 'https://www.espncricinfo.com/series/ipl-2020-21-1210595'
 
 const request = require('request');
 const cheerio = require('cheerio');
+const allMatchObj = require('./allMatchObj');
+const fs = require('fs');
+const path = require('path');
+
+ // __dirname will give parent directory path of our file
+
+ let iplPath = path.join(__dirname, "IPL") //DIRNAME IS espn scrapper
+
+ function dirCreator(filePath){
+     if(fs.existsSync(filePath) == false){  
+         fs.mkdirSync(filePath)
+     }
+ }
+
+
+ dirCreator(iplPath);  //create ipl folder in espnScrapper
 
 request(url, cb)
 
@@ -24,30 +40,7 @@ function extractLink (html){
     let fullLink = "https://www.espncricinfo.com/" + link; 
     // console.log(fullLink)
 
-    getAllMatchesLink(fullLink);  //us page tak phuche jaha sare match pde hai
+    allMatchObj.getAllMatch(fullLink) //us page tak phuche jaha sare match pde hai
 }
 
-function getAllMatchesLink(uri){
-    request(uri, function(error, response, html){  //uri, cb  //request isliye kiya kyuki uri hai sirf usko request kero fir cheerio.load kero
-        if(error){
-            console.error(error);
-        }
-        else{
-            extractAllMatchesLink(html) ;  //scorecard ka link nikalege sbhi matches ka
-        }
-
-    })
-
-}
-
-function extractAllMatchesLink(html){  //$ is a sel tool
-
-    let $ = cheerio.load(html);
-    let scoreCardArr = $('a[data-hover="Scorecard"]'); //sare matches ka link hai ScorCardArray me
-
-    for(let i = 0; i < scoreCardArr.length; i++){
-        let link = $(scoreCardArr[i]).attr('href');
-        let fullLink = "https://www.espncricinfo.com/" + link;
-    }
-}
 
